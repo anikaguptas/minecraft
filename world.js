@@ -11,8 +11,9 @@ export class World extends THREE.Group {
     this.size = size;
     this.generateData();
   }
-
   generate() {
+    this.generateData();
+
     this.generateWorld();
   }
   //generate terrain in the video
