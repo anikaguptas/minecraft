@@ -3,6 +3,7 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { World } from "./world.js";
 import Stats from "three/examples/jsm/libs/stats.module";
 import { createGui } from "./lilgui.js";
+import { threshold } from "three/webgpu";
 
 //stats setup
 const stats = new Stats();

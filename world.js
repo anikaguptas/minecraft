@@ -1,19 +1,35 @@
 import * as THREE from "three";
+import { instance } from "three/webgpu";
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 export class World extends THREE.Group {
-  /**
-   * @type {{
-   * id: number,
-   * instanceId: number
-   * }[][][]}
-   */
   data = [];
 
-  //default size
   constructor(size = { width: 32, height: 16 }) {
     super();
     this.size = size;
+  }
+
+  generate() {
+    this.generateData();
+    this.generateWorld();
+  }
+
+  generateData() {
+    for (let x = 0; x < this.size.width; x++) {
+      const slice = [];
+      for (let y = 0; y < this.size.height; y++) {
+        const row = [];
+        for (let z = 0; z < this.size.width; z++) {
+          row.push({
+            id: 1,
+            instanceId: null,
+          });
+        }
+        slice.push(row);
+      }
+      this.data.push(slice);
+    }
   }
 
   generateWorld() {
