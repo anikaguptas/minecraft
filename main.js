@@ -36,7 +36,6 @@ controls.dampingFactor = 0.15;
 //scene setup
 const scene = new THREE.Scene();
 const world = new World();
-world.generateWorld();
 scene.add(world);
 
 //lights setup

@@ -1,22 +1,34 @@
 import * as THREE from "three";
-import { instance } from "three/webgpu";
+import { SimplexNoise } from "three/examples/jsm/math/SimplexNoise.js";
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 export class World extends THREE.Group {
   data = [];
+
+  params = {
+    terrain: {
+      scale: 15,
+      magnitude: 0.5,
+      offset: 0.5,
+    },
+  };
+
   //id means grass, rock , etc
   //instance id is the instance mesh number
   constructor(size = { width: 32, height: 16 }) {
     super();
     this.size = size;
     this.generateData();
+    this.generateTerrain();
+    this.generateWorld();
   }
   generate() {
     this.generateData();
+    this.generateTerrain();
 
     this.generateWorld();
   }
-  //generate terrain in the video
+
   //assigns each block id to 1 that is grass
   generateData() {
     this.data = [];
@@ -26,7 +38,7 @@ export class World extends THREE.Group {
         const row = [];
         for (let z = 0; z < this.size.width; z++) {
           row.push({
-            id: 1,
+            id: 0,
             instanceId: null,
           });
         }
@@ -35,6 +47,31 @@ export class World extends THREE.Group {
       this.data.push(slice);
     }
   }
+
+  //noised terrain
+  generateTerrain() {
+    const simplex = new SimplexNoise();
+    for (let x = 0; x < this.size.width; x++) {
+      for (let z = 0; z < this.size.width; z++) {
+        const value = simplex.noise(
+          x / this.params.terrain.scale,
+          z / this.params.terrain.scale
+        );
+        const scalednoise =
+          this.params.terrain.offset + this.params.terrain.magnitude * value;
+        let height = Math.floor(this.size.height * scalednoise);
+        height = Math.max(0, Math.min(this.size.height - 1, height));
+
+        for (let y = 0; y < this.size.height; y++) {
+          if (y <= height) {
+            this.setblockid(x, y, z, 1);
+          }
+        }
+      }
+    }
+  }
+
+  //instance generation and setting positions
   generateWorld() {
     this.clear();
     let maxCount = this.size.width * this.size.width * this.size.height;
