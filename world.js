@@ -1,11 +1,13 @@
 import * as THREE from "three";
 import { SimplexNoise } from "three/examples/jsm/math/SimplexNoise.js";
+import { RNG } from "./rng";
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 export class World extends THREE.Group {
   data = [];
 
   params = {
+    seed: 0,
     terrain: {
       scale: 15,
       magnitude: 0.5,
@@ -50,7 +52,8 @@ export class World extends THREE.Group {
 
   //noised terrain
   generateTerrain() {
-    const simplex = new SimplexNoise();
+    const rng = new RNG(this.params.seed);
+    const simplex = new SimplexNoise(rng);
     for (let x = 0; x < this.size.width; x++) {
       for (let z = 0; z < this.size.width; z++) {
         const value = simplex.noise(
