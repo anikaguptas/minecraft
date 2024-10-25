@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { SimplexNoise } from "three/examples/jsm/math/SimplexNoise.js";
 import { RNG } from "./rng";
+import { blocks } from "./blocks";
 const geometry = new THREE.BoxGeometry();
 const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
 export class World extends THREE.Group {
@@ -40,7 +41,7 @@ export class World extends THREE.Group {
         const row = [];
         for (let z = 0; z < this.size.width; z++) {
           row.push({
-            id: 0,
+            id: blocks.empty.id,
             instanceId: null,
           });
         }
@@ -66,8 +67,12 @@ export class World extends THREE.Group {
         height = Math.max(0, Math.min(this.size.height - 1, height));
 
         for (let y = 0; y < this.size.height; y++) {
-          if (y <= height) {
-            this.setblockid(x, y, z, 1);
+          if (y < height) {
+            this.setblockid(x, y, z, blocks.dirt.id);
+          } else if (y == height) {
+            this.setblockid(x, y, z, blocks.grass.id);
+          } else {
+            this.setblockid(x, y, z, blocks.empty.id);
           }
         }
       }
