@@ -3,7 +3,8 @@ import { SimplexNoise } from "three/examples/jsm/math/SimplexNoise.js";
 import { RNG } from "./rng";
 import { blocks } from "./blocks";
 const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshStandardMaterial({ color: 0x00ff00 });
+const grassmaterial = new THREE.MeshStandardMaterial({});
+
 export class World extends THREE.Group {
   data = [];
 
@@ -83,17 +84,19 @@ export class World extends THREE.Group {
   generateWorld() {
     this.clear();
     let maxCount = this.size.width * this.size.width * this.size.height;
-    const mesh = new THREE.InstancedMesh(geometry, material, maxCount);
+    const mesh = new THREE.InstancedMesh(geometry, grassmaterial, maxCount);
     mesh.count = 0;
     const matrix = new THREE.Matrix4();
     for (let x = 0; x < this.size.width; x++) {
       for (let z = 0; z < this.size.width; z++) {
         for (let y = 0; y < this.size.height; y++) {
           const blockid = this.getblock(x, y, z).id;
+          const blocktype = Object.values(blocks).find((x) => x.id == blockid);
           if (blockid != 0) {
             const instanceId = mesh.count;
             matrix.setPosition(x + 0.5, y + 0.5, z + 0.5);
             mesh.setMatrixAt(instanceId, matrix);
+            mesh.setColorAt(instanceId, new THREE.Color(blocktype.color));
             this.setinstanceid(x, y, z, instanceId);
             mesh.count++;
           }
@@ -102,6 +105,7 @@ export class World extends THREE.Group {
     }
     this.add(mesh);
   }
+
   getblock(x, y, z) {
     if (this.inbounds(x, y, z)) {
       return this.data[x][y][z];

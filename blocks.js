@@ -8,16 +8,16 @@ export const blocks = {
   grass: {
     id: 1,
     name: "grass",
-    color: "green",
+    color: 0x00ff00,
   },
   dirt: {
     id: 2,
     name: "dirt",
-    color: "brown",
+    color: 0x654321,
   },
   stone: {
     id: 3,
     name: "stone",
-    color: "grey",
+    color: 0x808080,
   },
 };
